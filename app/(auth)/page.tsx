@@ -146,7 +146,7 @@ export default function LandingPage() {
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
-            href="#features"
+            href="/features"
             className="px-8 py-3 border border-slate-700 hover:border-slate-600 text-white rounded-lg font-semibold transition-colors"
           >
             Learn More

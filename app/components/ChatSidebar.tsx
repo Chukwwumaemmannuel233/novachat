@@ -26,10 +26,11 @@ import {
   CreditCard,
   Lock,
   AlertCircle,
+  LogOut,
 } from "lucide-react"
 
 interface Chat {
-  id: number
+  id: string
   title: string
 }
 
@@ -38,9 +39,9 @@ interface Props {
   setCollapsed: (v: boolean) => void
   chats: Chat[]
   onNewChat: () => void
-  onSelectChat: (id: number) => void
-  onDeleteChat: (id: number) => void
-  selectedChatId: number | null
+  onSelectChat: (id: string) => void
+  onDeleteChat: (id: string) => void
+  selectedChatId: string | null
   isOpen: boolean
   setIsOpen: (v: boolean) => void
   isDesktop?: boolean
@@ -59,8 +60,9 @@ export default function ChatSidebar({
   isDesktop = false,
 }: Props) {
   const [recentOpen, setRecentOpen] = useState(true)
-  const [openDropdown, setOpenDropdown] = useState<number | null>(null)
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const [toolsOpen, setToolsOpen] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
   const dropdownRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -72,6 +74,19 @@ export default function ChatSidebar({
     document.addEventListener("mousedown", handler)
     return () => document.removeEventListener("mousedown", handler)
   }, [])
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      const response = await fetch("/api/auth/logout", { method: "POST" })
+      if (response.ok) {
+        window.location.href = "/"
+      }
+    } catch (error) {
+      console.error("Logout error:", error)
+      setIsLoggingOut(false)
+    }
+  }
 
   const overlayVariants = {
     hidden: { opacity: 0 },
@@ -331,7 +346,10 @@ export default function ChatSidebar({
           </Link>
 
           {!collapsed && (
-            <div className="flex items-center gap-2 flex-1 min-w-0">
+            <Link
+              href="/dashboard/profile"
+              className="flex items-center gap-2 flex-1 min-w-0 hover:bg-blue-600/10 p-2 rounded-md transition cursor-pointer"
+            >
               <img
                 src="https://media.istockphoto.com/id/2192499195/photo/studio-portrait-of-happy-multiracial-mid-adult-man-wearing-brown-shirt-toothy-smile.jpg?s=612x612&w=0&k=20&c=QO9XdwXJdi9xyqsKWnamn41hPTOMFEHx3P9v4zDvbOk="
                 alt="User"
@@ -342,8 +360,18 @@ export default function ChatSidebar({
                 <p className="text-white text-sm font-semibold truncate">User Name</p>
                 <p className="text-slate-400 text-xs truncate">Free Plan</p>
               </div>
-            </div>
+            </Link>
           )}
+
+          <motion.button
+            whileHover={{ scale: 1.1, color: "#ef4444" }}
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="text-slate-400 hover:text-red-400 transition p-1.5 flex-shrink-0 disabled:opacity-50"
+            title="Logout"
+          >
+            <LogOut size={16} />
+          </motion.button>
         </div>
       </motion.aside>
     )
@@ -585,7 +613,10 @@ export default function ChatSidebar({
             </motion.button>
           </Link>
 
-          <div className="flex items-center gap-3 flex-1 min-w-0">
+          <Link
+            href="/dashboard/profile"
+            className="flex items-center gap-3 flex-1 min-w-0 hover:bg-blue-600/10 p-2 rounded-md transition cursor-pointer"
+          >
             <img
               src="https://media.istockphoto.com/id/2192499195/photo/studio-portrait-of-happy-multiracial-mid-adult-man-wearing-brown-shirt-toothy-smile.jpg?s=612x612&w=0&k=20&c=QO9XdwXJdi9xyqsKWnamn41hPTOMFEHx3P9v4zDvbOk="
               alt="User"
@@ -596,7 +627,17 @@ export default function ChatSidebar({
               <p className="text-white text-sm font-semibold truncate">User Name</p>
               <p className="text-slate-400 text-xs truncate">Free Plan</p>
             </div>
-          </div>
+          </Link>
+
+          <motion.button
+            whileHover={{ scale: 1.1, color: "#ef4444" }}
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="text-slate-400 hover:text-red-400 transition p-1 flex-shrink-0 disabled:opacity-50"
+            title="Logout"
+          >
+            <LogOut size={16} />
+          </motion.button>
         </div>
       </motion.aside>
     </>
