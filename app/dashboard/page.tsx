@@ -1,53 +1,67 @@
-"use client"
-import { useState } from "react"
-import Link from "next/link"
-import ChatSidebar from "../components/ChatSidebar"
-import ChatWindow from "../components/ChatWindow"
-import { Menu, Zap } from "lucide-react"
-import { motion } from "framer-motion"
+"use client";
+import { useState } from "react";
+import Link from "next/link";
+import ChatSidebar from "../components/ChatSidebar";
+import ChatWindow from "../components/ChatWindow";
+import { Menu, Zap } from "lucide-react";
+import { motion } from "framer-motion";
+import { Chat, Message } from "../types";
 
-interface Message {
-  role: "user" | "ai"
-  text: string
-}
-interface Chat {
-  id: number
-  title: string
-  messages: Message[]
-}
+
+// interface Message {
+//   role: "user" | "ai";
+//   text: string;
+// }
+// interface Chat {
+//   id: string;
+//   title: string;
+//   messages: Message[];
+// }
 
 export default function ChatLayout() {
-  const [collapsed, setCollapsed] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
-  const [chats, setChats] = useState<Chat[]>([{ id: 1, title: "New Chat", messages: [] }])
-  const [selectedChatId, setSelectedChatId] = useState<number>(chats[0].id)
+  const [collapsed, setCollapsed] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [chats, setChats] = useState<Chat[]>([
+    { id: "1", title: "New Chat", messages: [] },
+  ]);
+  const [selectedChatId, setSelectedChatId] = useState<string>(chats[0].id);
 
   const handleNewChat = () => {
-    const newChat: Chat = { id: Date.now(), title: "New Chat", messages: [] }
-    setChats((prev) => [newChat, ...prev])
-    setSelectedChatId(newChat.id)
-  }
+    const newChat: Chat = {
+      id: Date.now().toString(),
+      title: "New Chat",
+      messages: [],
+    }; // ✅ string id
+    setChats((prev) => [newChat, ...prev]);
+    setSelectedChatId(newChat.id);
+  };
 
-  const handleSelectChat = (id: number) => {
-    setSelectedChatId(id)
-    setIsOpen(false)
-  }
+  const handleSelectChat = (id: string) => {
+    // ✅ string id
+    setSelectedChatId(id);
+    setIsOpen(false);
+  };
 
-  const handleDeleteChat = (id: number) => {
+  const handleDeleteChat = (id: string) => {
+    // ✅ string id
     setChats((prev) => {
-      const updated = prev.filter((c) => c.id !== id)
+      const updated = prev.filter((c) => c.id !== id);
       if (selectedChatId === id) {
         if (updated.length > 0) {
-          setSelectedChatId(updated[0].id)
+          setSelectedChatId(updated[0].id);
         } else {
-          const newChat = { id: Date.now(), title: "New Chat", messages: [] }
-          setSelectedChatId(newChat.id)
-          return [newChat]
+          const newChat = {
+            id: Date.now().toString(),
+            title: "New Chat",
+            messages: [],
+          }; // ✅ string id
+          setSelectedChatId(newChat.id);
+          return [newChat];
         }
       }
-      return updated
-    })
-  }
+      return updated;
+    });
+  };
 
   const handleSendMessage = (message: string) => {
     setChats((prev) =>
@@ -55,25 +69,34 @@ export default function ChatLayout() {
         chat.id === selectedChatId
           ? {
               ...chat,
-              title: chat.title === "New Chat" && message ? message.slice(0, 20) : chat.title,
+              title:
+                chat.title === "New Chat" && message
+                  ? message.slice(0, 20)
+                  : chat.title,
               messages: [...chat.messages, { role: "user", text: message }],
             }
-          : chat,
-      ),
-    )
+          : chat
+      )
+    );
 
     setTimeout(() => {
       setChats((prev) =>
         prev.map((chat) =>
           chat.id === selectedChatId
-            ? { ...chat, messages: [...chat.messages, { role: "ai", text: `AI: I heard "${message}"` }] }
-            : chat,
-        ),
-      )
-    }, 700)
-  }
+            ? {
+                ...chat,
+                messages: [
+                  ...chat.messages,
+                  { role: "ai", text: `AI: I heard "${message}"` },
+                ],
+              }
+            : chat
+        )
+      );
+    }, 700);
+  };
 
-  const selectedChat = chats.find((c) => c.id === selectedChatId) || null
+  const selectedChat = chats.find((c) => c.id === selectedChatId) || null;
 
   return (
     <div className="h-dvh w-full flex bg-gray-950 overflow-hidden relative">
@@ -139,8 +162,10 @@ export default function ChatLayout() {
 
       {/* Main Chat Area */}
       <main className="flex-1 h-full transition-all duration-200 pt-14 lg:pt-0 overflow-hidden">
-        {selectedChat && <ChatWindow chat={selectedChat} onSendMessage={handleSendMessage} />}
+        {selectedChat && (
+          <ChatWindow chat={selectedChat} onSendMessage={handleSendMessage} />
+        )}
       </main>
     </div>
-  )
+  );
 }

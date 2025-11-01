@@ -28,24 +28,24 @@ import {
   AlertCircle,
   LogOut,
 } from "lucide-react"
+import { Chat, Message } from "../types";
 
-interface Chat {
-  id: string
-  title: string
-}
+
+
 
 interface Props {
-  collapsed: boolean
-  setCollapsed: (v: boolean) => void
-  chats: Chat[]
-  onNewChat: () => void
-  onSelectChat: (id: string) => void
-  onDeleteChat: (id: string) => void
-  selectedChatId: string | null
-  isOpen: boolean
-  setIsOpen: (v: boolean) => void
-  isDesktop?: boolean
+  collapsed: boolean;
+  setCollapsed: (v: boolean) => void;
+  chats: Chat[];
+  onNewChat: () => void;
+  onSelectChat: (id: string) => void;
+  onDeleteChat: (id: string) => void;
+  selectedChatId: string | null;
+  isOpen: boolean;
+  setIsOpen: (v: boolean) => void;
+  isDesktop?: boolean;
 }
+
 
 export default function ChatSidebar({
   collapsed,

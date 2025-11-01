@@ -2,16 +2,8 @@
 import { useState, useEffect, useRef } from "react"
 import MessageBubble from "./MessageBubble"
 import InputBox from "./InputBox"
+import { Chat, Message } from "../types";
 
-interface Message {
-  role: "user" | "ai"
-  text: string
-}
-interface Chat {
-  id: number
-  title: string
-  messages: Message[]
-}
 interface Props {
   chat: Chat
   onSendMessage: (msg: string) => void
